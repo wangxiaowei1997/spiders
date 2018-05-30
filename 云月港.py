@@ -39,17 +39,21 @@ def parse_html(html):
                 print game_name
                 game_name_list.append(game_name)
                 # print(game_url['href'])
-    
-    return game_name_list
+                
+    next_page=soup.find('span',attrs={'id':'fd_page_bottom'}).find('a',attrs={'class':'nxt'})
+    if next_page:
+        return game_name_list,next_page['href']
+    return game_name_list,None
   
 
 def main():
+    url = DOWNLOAD_URL
     with codecs.open('games', 'wb', encoding='utf-8') as fp:
-         url = DOWNLOAD_URL
-         html = download_page(url)
-         games=parse_html(html)
-        #  print games
-         fp.write(u'{games}\n'.format(games='\n'.join(games)))
+         while url:
+                 html = download_page(url)
+                 games,url=parse_html(html)
+                #  print games
+                 fp.write(u'{games}\n'.format(games='\n'.join(games)))
       
 
 if __name__ == '__main__':
